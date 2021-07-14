@@ -847,7 +847,14 @@ class TestDistributionStrategyWithNumpyArrays(tf.test.TestCase,
 class TestDistributionStrategyWithDatasets(tf.test.TestCase,
                                            parameterized.TestCase):
 
-  @tf.__internal__.distribute.combinations.generate(all_strategy_combinations())
+  @tf.__internal__.distribute.combinations.generate(
+      all_strategy_combinations() + tf.__internal__.test.combinations.combine(
+          distribution=[
+              tf.__internal__.distribute.combinations
+              .parameter_server_strategy_3worker_2ps_cpu, tf.__internal__.
+              distribute.combinations.parameter_server_strategy_3worker_2ps_1gpu
+          ],
+          mode='eager'))
   def test_calling_model_on_same_dataset(self, distribution):
     with self.cached_session():
       with distribution.scope():
